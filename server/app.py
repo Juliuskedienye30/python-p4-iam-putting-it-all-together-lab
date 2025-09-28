@@ -1,4 +1,3 @@
-
 #!/usr/bin/env python3
 
 from flask import request, session
@@ -105,9 +104,17 @@ class RecipeIndex(Resource):
 
         request_json = request.get_json()
 
-        title = request_json['title']
-        instructions = request_json['instructions']
-        minutes_to_complete = request_json['minutes_to_complete']
+        title = request_json.get('title')
+        instructions = request_json.get('instructions')
+        minutes_to_complete = request_json.get('minutes_to_complete')
+
+        # Validate required fields
+        if not title or not instructions or not minutes_to_complete:
+            return {'error': '422 Unprocessable Entity'}, 422
+        
+        # Validate instruction length (must be at least 50 characters)
+        if len(instructions) < 50:
+            return {'error': '422 Unprocessable Entity'}, 422
 
         try:
 
