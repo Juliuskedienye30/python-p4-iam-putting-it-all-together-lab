@@ -21,8 +21,20 @@ function LoginForm({ onLogin }) {
       if (r.ok) {
         r.json().then((user) => onLogin(user));
       } else {
-        r.json().then((err) => setErrors(err.errors));
+        r.json().then((err) => {
+          // Handle different error response formats
+          if (err.errors && Array.isArray(err.errors)) {
+            setErrors(err.errors);
+          } else if (err.error) {
+            setErrors([err.error]); // Single error message
+          } else {
+            setErrors(["Login failed. Please try again."]);
+          }
+        });
       }
+    }).catch(() => {
+      setIsLoading(false);
+      setErrors(["Network error. Please try again."]);
     });
   }
 
@@ -54,7 +66,7 @@ function LoginForm({ onLogin }) {
         </Button>
       </FormField>
       <FormField>
-        {errors.map((err) => (
+        {errors && errors.length > 0 && errors.map((err) => (
           <Error key={err}>{err}</Error>
         ))}
       </FormField>
