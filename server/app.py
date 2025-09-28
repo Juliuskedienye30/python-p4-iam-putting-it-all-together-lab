@@ -101,32 +101,32 @@ class RecipeIndex(Resource):
         return [recipe.to_dict() for recipe in user.recipes], 200
         
         
-def post(self):
+    def post(self):
 
-    request_json = request.get_json()
+        request_json = request.get_json()
 
-    title = request_json['title']
-    instructions = request_json['instructions']
-    minutes_to_complete = request_json['minutes_to_complete']
+        title = request_json['title']
+        instructions = request_json['instructions']
+        minutes_to_complete = request_json['minutes_to_complete']
 
-    try:
+        try:
 
-        recipe = Recipe(
-            title=title,
-            instructions=instructions,
-            minutes_to_complete=minutes_to_complete,
-            user_id=session['user_id'],
-        )
+            recipe = Recipe(
+                title=title,
+                instructions=instructions,
+                minutes_to_complete=minutes_to_complete,
+                user_id=session['user_id'],
+            )
 
-        db.session.add(recipe)
-        db.session.commit()
+            db.session.add(recipe)
+            db.session.commit()
 
-        return recipe.to_dict(), 201
+            return recipe.to_dict(), 201
 
-    except IntegrityError:
-        return {'error': '422 Unprocessable Entity'}, 422
-    except ValueError as e:
-        return {'error': str(e)}, 422
+        except IntegrityError:
+
+            return {'error': '422 Unprocessable Entity'}, 422
+
 
 api.add_resource(Signup, '/signup', endpoint='signup')
 api.add_resource(CheckSession, '/check_session', endpoint='check_session')
